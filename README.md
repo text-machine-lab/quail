@@ -16,6 +16,8 @@ This repository contains the main and challenge data for QuAIL reading comprehen
 
 See the blog post describing the project and updates post-paper-publication: https://text-machine-lab.github.io/blog/2020/quail
 
+Challenge dataset: 30 fiction texts with 18 questions each, written to be difficult for NLP systems that learned to rely on naive lexical matching. Here you will find [the data]() and our [notes](./quail_paraphrased/Paraphrasing.md) with different paraphrasing strategies. 
+
 Published paper: https://aaai.org/ojs/index.php/AAAI/article/view/6398
 
 Leaderboard: http://text-machine.cs.uml.edu/lab2/projects/quail/
