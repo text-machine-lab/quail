@@ -28,7 +28,7 @@ There are 3 major types of questions:
 
 The questions in QuAIL dataset were written by Amazon Mechanical Turk workers. Each question  has 4 answer options, of which the option "not enough information" is the correct answer for unanswerable questions.  However, many questions are easy for AI systems to answer without any real understanding of the text. This problem persists in many other RC datasets, and inspired a lot of work on adversarial filtering of crowdsourced data; see our [blog post](https://text-machine-lab.github.io/blog/2020/quail/#discussion-other-ways-to-increase-question-diversity) for some references. The general problem with this approach is that data created to be adversarial to one model will not necessarily be equally different for another one, so ideally we would have some model-independent strategies for authoring difficult questions.
 
-In scope of QuAIL project, we conducted an additional experiment with adversarial paraphrasing of Turker-authored questions and answers. This document is a collection of working notes on strategies we used for writing more difficult questions. We used these strategies to manually create a small dataset of 30 texts with 18 questions each, available in this repository. We found that these questions were significantly more difficult for systems trained on regular QuAIL data. See the results of this experiment [here](https://text-machine-lab.github.io/blog/2020/quail/#paraphrasing-hurts). 
+In scope of QuAIL project, we conducted an additional experiment with adversarial paraphrasing of Turker-authored questions and answers. This document is a collection of working notes on strategies we used for writing more difficult questions. We used these strategies to manually create a small challenge set of 556 questions (30 texts, 18 questions each), available in this repository ([file](./quail_challenge_test.xml). We found that these questions were indeed significantly more difficult for systems trained on regular QuAIL data. See the results of this experiment [here](https://text-machine-lab.github.io/blog/2020/quail/#paraphrasing-hurts). 
  
  If you find this useful for developing your own RC data, please cite [our paper](https://aaai.org/ojs/index.php/AAAI/article/view/6398) :) 
  
@@ -77,8 +77,7 @@ Note that this strategy can also fail if only the correct option is always parap
 2. Since QuAIL has 2 questions of each type for each text, one could be paraphrased, and the other left unparaphrased, so that a system would be punished in 50% of cases if it learned to simply learn to look for the option that does not have a direct match in the text. 
 
 We will refer to option (2) as 2/1 paraphrasing strategy: only the correct answer in one question, correct + one incorrect in another. If possible, the incorrect option that is mentioned the closest to the question words should the one left unparaphrased.    
-
-These guidelines describe specific strategies for each question type that will make them harder for AI systems.
+This is the general approach to paraphrasing that we used. Below we describe extra strategies we used for specific question types.
 
 ## <a id="temporal_order"/></a> Temporal order questions
 
@@ -249,7 +248,7 @@ Note that the correct answer is not found in the text directly, but both incorre
 
 ## <a id="causality"/></a> Questions about causal relations
 
-Causal questions target causal relations between two events. This is in fact between text-based and world-knowledge-based questions, because the Turkers wrote both of them:
+Causal questions target causal relations between two events. This is in fact between text-based and world-knowledge-based questions, because the Turkers wrote both of them (although we asked specifically for the text-based questions):
 
 * the correct answer (and sometimes the causal relation) are spelled out in the text: 
 
@@ -335,7 +334,7 @@ Question: How long did it probably take John to eat a sandwich?
 (c) a few days
 ```
 
-This looks like a question requiring world knowledge, but we found that an AI system that simply looked in a large collection of texts for combinations of "eat" + "minutes", "eat" + "hours", "eat" + "days" would get more hits for the former and thus arrive at the correct answer - still without understanding anything about event duration. 
+This looks like a question requiring world knowledge, but an AI system that simply learned that "eat" occurs more frequently in the context of "minutes", rather than "hours" or "days", would still arrive at the correct answer without understanding anything about event duration. 
 
 To make such a question more difficult, one strategy is to change the answer options so as to use the same unit of measurement:
 
@@ -385,5 +384,5 @@ Question: Who is Fred?
 (c) John's cousin
 ```
 
-Because there are so many of them, it would be easy for an AI system to just learn to react to the "Who" word or the answers with options about jobs/relations. However, we also have many such questions in the character identity category, so it should balance things out.
+Because there are so many of them, it would be easy for an AI system to just learn to react to the "who" word or the answers with options about jobs/relations. However, we also have many such questions in the character identity category, so it should balance things out.
 
