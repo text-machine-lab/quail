@@ -28,7 +28,7 @@ There are 3 major types of questions:
 
 The questions in QuAIL dataset were written by Amazon Mechanical Turk workers. Each question  has 4 answer options, of which the option "not enough information" is the correct answer for unanswerable questions.  However, many questions are easy for AI systems to answer without any real understanding of the text. This problem persists in many other RC datasets, and inspired a lot of work on adversarial filtering of crowdsourced data; see our [blog post](https://text-machine-lab.github.io/blog/2020/quail/#discussion-other-ways-to-increase-question-diversity) for some references. The general problem with this approach is that data created to be adversarial to one model will not necessarily be equally different for another one, so ideally we would have some model-independent strategies for authoring difficult questions.
 
-In scope of QuAIL project, we conducted an additional experiment with adversarial paraphrasing of Turker-authored questions and answers. This document is a collection of working notes on strategies we used for writing more difficult questions. We used these strategies to manually create a small challenge set of 556 questions (30 texts, 18 questions each), available in this repository ([file](./quail_challenge_test.xml). We found that these questions were indeed significantly more difficult for systems trained on regular QuAIL data. See the results of this experiment [here](https://text-machine-lab.github.io/blog/2020/quail/#paraphrasing-hurts). 
+In scope of QuAIL project, we conducted an additional experiment with adversarial paraphrasing of Turker-authored questions and answers. This document is a collection of working notes on strategies we used for writing more difficult questions. We used these strategies to manually create a small challenge set of 556 questions (30 texts, 18 questions each), available in this repository ([file](./quail_challenge_test.xml)). We found that these questions were indeed significantly more difficult for systems trained on regular QuAIL data. See the results of this experiment [here](https://text-machine-lab.github.io/blog/2020/quail/#paraphrasing-hurts). 
  
  If you find this useful for developing your own RC data, please cite [our paper](https://aaai.org/ojs/index.php/AAAI/article/view/6398) :) 
  
@@ -76,8 +76,9 @@ Note that this strategy can also fail if only the correct option is always parap
 
 2. Since QuAIL has 2 questions of each type for each text, one could be paraphrased, and the other left unparaphrased, so that a system would be punished in 50% of cases if it learned to simply learn to look for the option that does not have a direct match in the text. 
 
-We will refer to option (2) as 2/1 paraphrasing strategy: only the correct answer in one question, correct + one incorrect in another. If possible, the incorrect option that is mentioned the closest to the question words should the one left unparaphrased.    
-This is the general approach to paraphrasing that we used. Below we describe extra strategies we used for specific question types.
+We will refer to option (2) as 2/1 paraphrasing strategy: only the correct answer in one question, correct + one incorrect in another. If possible, the incorrect option that is mentioned the closest to the question words should the one left unparaphrased. Since our challenge set is small and only meant for testing, we did not do this consistently, aiming to make all questions as difficult as possible - but generally to develop a training dataset this is probably the way to go: the model should be taught that the text is a useful, but insufficient source of information. 
+   
+Below we describe extra strategies we used for specific question types.
 
 ## <a id="temporal_order"/></a> Temporal order questions
 
@@ -196,7 +197,7 @@ Question: Where did John go?
 
 Even if all the incorrect options are found in the text, it will be easy for an AI system to answer this question correctly simply by finding the answer that is mentioned the closest to "go"/"went" and "John". This of course does not actually require understanding language.
 
-The fastest way to make such questions more difficult is to paraphrase the correct answer with our 2/1 paraphrasing strategy:
+The fastest way to make such questions more difficult is to paraphrase the correct answer:
 
 ```xml
 Text: John went home.
@@ -232,7 +233,7 @@ What they have in common is that the correct answer is not found in the text, bu
 
 Since such questions do not have answers present in the text, an AI system has to make use of external knowledge to make the choice. So there is no need to paraphrase anything. However, we have an opposite problem: a system can simply scan the answers, find that they are not found in the text, and only from that it would figure out that it needs to use external knowledge resources. In other words, there is an obvious statistical difference between world knowledge questions and text questions that gives away a part of the game. 
 
-The solution to this problem is the opposite of our 2/1 paraphrasing strategy: the 2/1 text mention strategy. In one question of a given type, one of the incorrect options should mention something that is found in the text, and in the other both incorrect options should have such a mention. 
+The solution to this problem is the opposite of our 2/1 paraphrasing strategy: the 2/1 text mention strategy. In other words, the distractor answers for world knowledge questions *should* contain plausible words from the text. Ideally, if we have 2 questions of each type, one of them would have one such distractor, and the other one two (to make it look more like the text-based questions). 
 
 For instance, the following causality question is not answerable from the text:
 
@@ -270,7 +271,7 @@ Question: Why did John eat a cake?
 (c) because he was anxious
 ``` 
 
-If the correct answer is found in the text, the usual 2/1 paraphrasing strategy applies:
+If the correct answer is found in the text, we paraphrase it (and if the data were meant for training, we would only paraphrase half the cases):
 
 ```xml
 Text: John was hungry after the conference, so he ate a cake.
@@ -282,7 +283,7 @@ Question: Why did John consume a desert?
 
 In term of reasons provided, note that answer options (b) is easy to rule out for people: we know that conferences on their own do not induce hunger or happiness. But, if they are mentioned in the text close to the reason for something, they would likely confuse a naive AI system that relies on lexical cooccurrence too much. 
 
-If the correct answer is *not* found in the text, we can use the opposite 2/1 text mention for the world knowledge questions:
+If the correct answer is *not* found in the text, we can use the opposite strategy with distractors-mentioned-in-text:
 
 ```xml
 Text: The conference lasted for hours, everybody was anxious for a coffee break. John went out and ate a cake.
@@ -304,7 +305,7 @@ Question: After the end of the story, what is probably true about John?
 (c) John wants to see Mary
 ```
 
-The same 2/1 text mention strategy applies. In this example we mention a distractor word "walking" in option (b), so in the other subsequent state question for this batch we need to mention a distractor word in both incorrect options. 
+The same strategy for balancing distractors that are mentioned in the text applies. In this example we mention a distractor word "walking" in option (b), so in the other subsequent state question for this batch we need to mention a distractor word in both incorrect options. 
 
 A common pattern for the Turkers is to ask about the continuation of the story, and people may have genuine differences about what is the most plausible answer. If several answer options look plausible, it is best to change the incorrect answers so as to make them look less plausible for a human reader.
 
@@ -362,7 +363,7 @@ Question: What does John probably think about Fred?
 (c) Fred was looking for a sandwich.
 ```
 
-Note that inclusion of "sandwich" in (c) makes the question extra challenging, as it is mentioned in the text close to a mention of Fred. According to the 2/1 strategy, in the second question of this type per text, we can include two such mentions.
+Note that inclusion of "sandwich" in (c) makes the question extra challenging, as it is mentioned in the text close to a mention of Fred. 
 
 # <a id="unanswerable"/></a> Unanswerable questions
 
@@ -384,5 +385,6 @@ Question: Who is Fred?
 (c) John's cousin
 ```
 
-Because there are so many of them, it would be easy for an AI system to just learn to react to the "who" word or the answers with options about jobs/relations. However, we also have many such questions in the character identity category, so it should balance things out.
+Because there are so many of them, it would be easy for an AI system to just learn to react to the "who" word or the answers with options about jobs/relations. However, we also have many such questions in the character identity category, so it should balance things out. 
 
+One lesson from QuAIL for the future is that the unanswerable questions don't naturally get generated with much diversity: the Turkers just go for the easiest factoid question type. The instructions and prompts for unanswerable questions should be as diverse as for other question types.
