@@ -16,6 +16,8 @@ This repository contains the main and challenge data for QuAIL reading comprehen
 
 See the blog post describing the project and updates post-paper-publication: https://text-machine-lab.github.io/blog/2020/quail
 
+We provide the data in two formats: xml and json. The json format is what is used in the leaderboard; you can get the files [here](./quail_v1.2/json) or in the [codalab data sheet](https://worksheets.codalab.org/worksheets/0xa8cd6ea812c04be7b728f44b2e0a56fc). The xml format is more human-readable, and there are two versions of each file: with questions and answers randomized and or ordered (but with the same order of the texts; see the results of experiments with different data splits [here](https://text-machine-lab.github.io/blog/2020/quail/#update-vaiance-in-fine-tuning)). 
+
 Challenge dataset: 30 fiction texts with 18 questions each, written to be difficult for NLP systems that learned to rely on naive lexical matching. Here you will find [the data](./quail_challenge_set/quail_challenge_test.xml) and our [notes](quail_challenge_set/Paraphrasing.md) with different paraphrasing strategies. 
 
 Published paper: https://aaai.org/ojs/index.php/AAAI/article/view/6398
@@ -23,4 +25,6 @@ Published paper: https://aaai.org/ojs/index.php/AAAI/article/view/6398
 Leaderboard: http://text-machine.cs.uml.edu/lab2/projects/quail/
 
 Leaderboard submission instructions: https://worksheets.codalab.org/worksheets/0xcb1727289e2b4688b6534c8253b3bc8e
+
+
 
