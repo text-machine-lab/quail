@@ -16,7 +16,7 @@ This repository contains the main and challenge data for QuAIL reading comprehen
 
 See the blog post describing the project and updates post-paper-publication: https://text-machine-lab.github.io/blog/2020/quail
 
-The data is available in [NLP Datasets library from Hugging Face](https://huggingface.co/nlp/viewer/?dataset=quail), as well as in this repository. We provide two formats: xml and jsonlines. The json format is what is used in our leaderboard; you can get the files [here](quail_v1.3/json) or in the [codalab data sheet](https://worksheets.codalab.org/worksheets/0xa8cd6ea812c04be7b728f44b2e0a56fc). The xml format is more human-readable, and there are two versions of each file: 
+The data is available in [NLP Datasets library from Hugging Face](https://huggingface.co/nlp/viewer/?dataset=quail), as well as in this repository. We provide two formats: xml and jsonlines. The json format is what is used in our [leaderboard](http://text-machine.cs.uml.edu/lab2/projects/quail/); you can get the files [here](quail_v1.3/json) or in the [codalab data sheet](https://worksheets.codalab.org/worksheets/0xa8cd6ea812c04be7b728f44b2e0a56fc). The xml format is more human-readable, and there are two versions of each file: 
 
 * [randomized](quail_v1.3/xml/randomized): the order of questions and answers is randomized. This is the version recommended for use in training/testing models, and the order is the same as the version provided in the Hugging Face Datasets collection
  * [ordered](quail_v1.3/xml/ordered): the questions are ordered by type, and the correct answers are listed first. This is the more human-readable version for data exploration. 
